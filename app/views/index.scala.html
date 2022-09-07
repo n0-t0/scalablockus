@@ -37,11 +37,9 @@
     <script src="@routes.Assets.versioned("javascripts/jquery-3.6.1.min.js")"></script>
 
     <script>
-            var webSocket;
-            var messageInput;
+            let webSocket;
+            let messageInput;
 
-            // initialize the WebSocket connection.
-            // note that i hard-code the server-side URL here.
             function init() {
               webSocket = new WebSocket("ws://localhost:9000/ws");
               webSocket.onopen = onOpen;
@@ -56,7 +54,7 @@
               consoleLog("CONNECTED");
                 function drawBoard(ctx) {
                     ctx.strokeStyle = 'rgb(54, 30, 0)'
-                    ctx.linewidth = 2
+                    ctx.lineWidth = 2
                     for(let h=0; h<=500; h+=50) {
                         ctx.beginPath()
                         ctx.moveTo(0, h)
@@ -106,7 +104,7 @@
 
                 function drawBoard(ctx) {
                     ctx.strokeStyle = 'rgb(54, 30, 0)'
-                    ctx.linewidth = 2
+                    ctx.lineWidth = 2
                     for(let h=0; h<=500; h+=50) {
                         ctx.beginPath()
                         ctx.moveTo(0, h)
@@ -129,8 +127,8 @@
                         drawCell(ctx, 50*x, 50*y+50*i, color)
                     }
                 }
-                function drawCell(ctx, x, y, fillcolor) {
-                    ctx.fillStyle = fillcolor
+                function drawCell(ctx, x, y, fillColor) {
+                    ctx.fillStyle = fillColor
                     ctx.fillRect(x, y, 50, 50)
                     ctx.strokeRect(x, y, 50, 50)
                 }

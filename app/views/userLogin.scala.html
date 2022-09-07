@@ -1,8 +1,7 @@
+@import controllers.MainController.LoginUser
 @(loginUserForm : Form[LoginUser])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 @import helper._
 @main("Play block game") {
     <h1>Play block game</h1>
     <h2>User register page</h2>
-    @helper.form(action = helper.CSRF(routes.HomeController.loginSubmit) {
-    }
 }
