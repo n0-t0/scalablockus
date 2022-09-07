@@ -1,18 +1,20 @@
 @()
-@main("Play Websockets 101") {
+@main("Play block game") {
 
-    <h1>Play Websockets 101</h1>
+    <h1>Play block game</h1>
 
       <!-- this is where the client and server output will be shown/appended -->
     <div id="message-content"></div>
 
       <!-- the textarea and button that make up our form -->
-    <form>
-      <label for="message-input">Message:</label>
-      <textarea id="message-input" ></textarea>
-      <button id="send-button" type="button">Send</button>
-    </form>
+@*    <form>*@
+@*      <label for="message-input">Message:</label>*@
+@*      <textarea id="message-input" ></textarea>*@
+@*      <button id="send-button" type="button">Send</button>*@
+@*    </form>*@
 
+
+    <canvas id="canvas" width="500px" height="500px"></canvas>
     <div>
         <table class="arrows">
             <tr>
@@ -27,6 +29,7 @@
             </tr>
         </table>
     </div>
+    <button type="button" id="place">place</button>
 
 
 
@@ -51,6 +54,25 @@
             // debug code
             function onOpen(event) {
               consoleLog("CONNECTED");
+                function drawBoard(ctx) {
+                    ctx.strokeStyle = 'rgb(54, 30, 0)'
+                    ctx.linewidth = 2
+                    for(let h=0; h<=500; h+=50) {
+                        ctx.beginPath()
+                        ctx.moveTo(0, h)
+                        ctx.lineTo(500, h)
+                        ctx.closePath()
+                        ctx.stroke()
+                    }
+                    for(let w=0; w<=500; w+=50) {
+                        ctx.beginPath()
+                        ctx.moveTo(w, 0)
+                        ctx.lineTo(w, 500)
+                        ctx.closePath()
+                        ctx.stroke()
+                    }
+                }
+                drawBoard(ctx)
             }
 
             // debug code
@@ -65,13 +87,57 @@
               consoleLog("ERROR: " + JSON.stringify(event));
             }
 
-            // this is where we receive a message from the server over
-            // the WebSocket connection
+            const canvas = document.getElementById("canvas")
+            const ctx = canvas.getContext("2d")
+
             function onMessage(event) {
               let receivedData = JSON.parse(event.data);
-              // get the text from the "body" field of the json we
-              // receive from the server
-              appendServerMessageToView("Server", receivedData.body);
+                let x = receivedData.x
+                let y = receivedData.y
+                let placed = receivedData.placed
+                if(placed===true) {
+                    console.log("successfully placed")
+                }
+
+              // appendServerMessageToView("from server", "("+receivedData.x+", "+receivedData.y+")");
+                console.log(x +", "+ y)
+                ctx.fillStyle = 'rgb(255, 255, 255)'
+                ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+                function drawBoard(ctx) {
+                    ctx.strokeStyle = 'rgb(54, 30, 0)'
+                    ctx.linewidth = 2
+                    for(let h=0; h<=500; h+=50) {
+                        ctx.beginPath()
+                        ctx.moveTo(0, h)
+                        ctx.lineTo(500, h)
+                        ctx.closePath()
+                        ctx.stroke()
+                    }
+                    for(let w=0; w<=500; w+=50) {
+                        ctx.beginPath()
+                        ctx.moveTo(w, 0)
+                        ctx.lineTo(w, 500)
+                        ctx.closePath()
+                        ctx.stroke()
+                    }
+                }
+                drawBoard(ctx)
+
+                function drawBlock(ctx, x, y, type, angle, color) {
+                    for(let i=0; i<3; i++) {
+                        drawCell(ctx, 50*x, 50*y+50*i, color)
+                    }
+                }
+                function drawCell(ctx, x, y, fillcolor) {
+                    ctx.fillStyle = fillcolor
+                    ctx.fillRect(x, y, 50, 50)
+                    ctx.strokeRect(x, y, 50, 50)
+                }
+                drawBlock(ctx, x, y, 40, 40, "rgb(0, 255, 0)")
+
+
+
             }
 
             // append “client” messages to the `message-content` div above
@@ -94,11 +160,14 @@
 
             // when the “Send” button is clicked, do this
 
-            document.getElementById('send-button').onclick = function () {
-                console.log('aaasddfs')
-              getMessageAndSendToServer();
-              // put focus back in the textarea
-              // $("#message-input").focus();
+            document.getElementById('place').onclick = () => {
+                console.log('place pushed')
+                if(webSocket.readyState === WebSocket.OPEN) {
+                    let msg = { "message": "place" }
+                    webSocket.send(JSON.stringify(msg));
+                } else {
+                    console.log("Could not send data because websocket is not open");
+                }
             };
 
             document.getElementById("left").onclick = () => {
@@ -152,6 +221,8 @@
                     }
                 }
             );
+
+
 
 
 

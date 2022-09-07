@@ -18,9 +18,12 @@ class SimpleWebSocketActor(clientActorRef: ActorRef, manager: ActorRef) extends 
       manager ! inJson
     }
     // message from PlayerInteractManager >> client
-    case outMsg: String => {
+    case outMsg: Message => {
       println("json output reach at actor")
-      val json = Json.parse(s"""{"body": "$outMsg"}""")
+      val x = outMsg.x
+      val y = outMsg.y
+      val placed = outMsg.placed
+      val json = Json.parse(s"""{"x":$x, "y":$y, "placed":$placed}""")
       clientActorRef ! json
     }
     case m => {
